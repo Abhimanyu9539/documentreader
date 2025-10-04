@@ -1,3 +1,4 @@
 .idx/
 .venv/
 .idx/
+.env

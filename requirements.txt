@@ -6,3 +6,5 @@ langchain-community
 
 pandas
 numpy
+
+e . 
