@@ -2,5 +2,9 @@
 .venv/
 .idx/
 .env
+__pycache__/
+logs/
+*.pyc
 
 Document_Portal.egg-info/
+test.py

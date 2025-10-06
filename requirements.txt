@@ -3,6 +3,13 @@ langgraph
 langchain-openai
 langchain-groq
 langchain-community
+python-dotenv
+ipykernel
+
+pypdf
+faiss-cpu
+structlog
+PyMuPDF
 
 pandas
 numpy
