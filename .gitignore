@@ -3,8 +3,12 @@
 .idx/
 .env
 __pycache__/
+<<<<<<< HEAD
 logs/
 *.pyc
 
 Document_Portal.egg-info/
 test.py
+=======
+logs/
+>>>>>>> 5e7c1fb (Add Custom Exceptions)
