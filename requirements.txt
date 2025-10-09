@@ -11,7 +11,10 @@ faiss-cpu
 structlog
 PyMuPDF
 
+
+structlog
+
 pandas
 numpy
 
--e .
+-- e .
