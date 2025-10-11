@@ -17,4 +17,4 @@ structlog
 pandas
 numpy
 
--- e .
+-e .
