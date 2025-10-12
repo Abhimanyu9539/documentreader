@@ -11,7 +11,7 @@ retriever:
 llm: 
   openai:
     provider: "openai"
-    model_name: "gpt-5-nano"
+    model_name: "gpt-4o-mini"
     temperature: 0
     max_output_tokens: 2048
 

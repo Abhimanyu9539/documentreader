@@ -7,7 +7,7 @@ logs/
 *.pyc
 
 Document_Portal.egg-info/
-test.py
+
 logs/
 
 data/
