@@ -57,7 +57,6 @@ class DocumentHandler:
             self.logger.error(f"Error reading PDF: {e}", session_id=self.session_id)
             raise DocumentPortalException(f"Error reading PDF: {e}", sys)
 
-
 if __name__ == "__main__":
     from pathlib import Path   
     
