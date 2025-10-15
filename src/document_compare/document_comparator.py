@@ -28,7 +28,7 @@ class DocumentComparator:
 
         except Exception as e:
             self.logger.error(f"Error initializing DocumentComparator: {e}")
-            raise DocumentPortalException("Failed to initialize DocumentComparator")
+            raise DocumentPortalException("Failed to initialize DocumentComparator", sys)
 
     def compare_documents(self, combined_docs: str) -> pd.DataFrame:
         """Compares two documents and returns structured comparison results."""

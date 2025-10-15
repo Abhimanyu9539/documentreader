@@ -1,10 +1,6 @@
 import sys
 import traceback
-from custom_logging.custom_logger import CustomLogger
-logger=CustomLogger().get_logger(__file__)
 
-import sys
-import traceback
 class DocumentPortalException(Exception):
     """Custom exception for Document Portal"""
     def __init__(self,error_message,error_details:sys):
