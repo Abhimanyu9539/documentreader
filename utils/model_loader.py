@@ -1,9 +1,9 @@
-import os, sys
+import os
+import sys
 from dotenv import load_dotenv
 from utils.config_loader import load_config
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_groq import ChatGroq
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_google_genai import ChatGoogleGenerativeAI
 from custom_logging.custom_logger import CustomLogger
 from exception.custom_exception import DocumentPortalException

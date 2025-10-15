@@ -18,4 +18,9 @@ structlog
 pandas
 numpy
 setuptools
+
+langchain-core[tracing]
+pytest
+streamlit
+
 -e .
