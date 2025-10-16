@@ -11,3 +11,4 @@ Document_Portal.egg-info/
 logs/
 
 data/
+faiss_index/

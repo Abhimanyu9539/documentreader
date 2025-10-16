@@ -55,7 +55,7 @@ from src.single_document_chat.data_ingestion import SingleDocIngestor
 from src.single_document_chat.retrieval import ConversationalRAG
 from utils.model_loader import ModelLoader
 
-FAISS_INDEX_PATH = Path("faiss_index")
+FAISS_INDEX_PATH = Path("faiss_index/faiss_index")
 
 def test_conversational_rag_on_pdf(pdf_path:str, question:str):
     try:
@@ -86,8 +86,8 @@ def test_conversational_rag_on_pdf(pdf_path:str, question:str):
     
 if __name__ == "__main__":
     # Example PDF path and question
-    pdf_path = "data\\single_document_chat\\1706.03762v7.pdf"
-    question = "What is the significance of the attention mechanism? can you explain it in simple terms?"
+    pdf_path = "/home/user/documentreader/data/single_document_chat/1706.03762v7.pdf"
+    question = "What is the attention mechanism? can you explain it in simple terms?"
 
     if not Path(pdf_path).exists():
         print(f"PDF file does not exist at: {pdf_path}")

@@ -32,7 +32,7 @@ class SingleDocIngestor():
         try:
             document_files  = []
             for uploaded_file in uploaded_files:
-                unique_filename =  f"session_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}"
+                unique_filename =  f"session_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}.pdf"
                 temp_path = self.data_dir / unique_filename
 
 
@@ -58,12 +58,19 @@ class SingleDocIngestor():
             self.logger.info("Documents split into chunks", chunks=len(texts))
 
             embeddings = self.model_loader.load_embeddings()
-            vector_store = FAISS.from_documents(documents=texts, embedding=embeddings)
-            self.logger.info("Vector store created with FAISS", faiss_path=str(self.faiss_dir))
-            
+
+            vector_store_path = self.faiss_dir / "faiss_index"
+
+            if vector_store_path.exists():
+                vector_store = FAISS.load_local(str(vector_store_path), embeddings, allow_dangerous_deserialization=True)
+                self.logger.info("Existing FAISS index loaded", faiss_path=str(vector_store_path))
+            else:
+                vector_store = FAISS.from_documents(documents=texts, embedding=embeddings)
+                vector_store.save_local(str(vector_store_path))
+                self.logger.info("New FAISS index created and saved", faiss_path=str(vector_store_path))
+
             return vector_store.as_retriever()
 
         except Exception as e:
             self.logger.error("Retriever creation failed", error = str(e))
             raise DocumentPortalException("Error creating retriever", sys)
-
