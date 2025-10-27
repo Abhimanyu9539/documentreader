@@ -5,7 +5,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 import os
 from pathlib import Path
-from typing import Any, List, Optional, Dict, Any
+from typing import Any, List, Optional
 from src.document_ingestion.data_ingestion import (
     DocumentComparator, 
     DocHandler, 
