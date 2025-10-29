@@ -20,7 +20,7 @@ from utils.model_loader import ModelLoader
 from custom_logging.custom_logger import CustomLogger
 from exception.custom_exception import DocumentPortalException
 
-from utils.file_io import session_id, save_uploaded_files
+from utils.file_io import session_id, save_uploaded_files, generate_session_id
 from utils.document_ops import load_documents, concat_for_analysis, concact_for_comparison
 
 SUPPORTED_EXTENSIONS = {'.pdf', '.docx', '.txt'}
@@ -88,7 +88,7 @@ class FAISSManager:
         if self._exists():
             self.vs = FAISS.load_local(
                 str(self.index_dir),
-                embeddings=self.emb,
+                embeddings=self.embedder,
                 allow_dangerous_deserialization=True,
             )
             return self.vs
@@ -97,7 +97,7 @@ class FAISSManager:
         if not texts:
             raise DocumentPortalException("No existing FAISS index and no data to create one", sys)
         
-        self.vs = FAISS.from_texts(texts=texts, embedding=self.emb, metadatas=metadatas or [])
+        self.vs = FAISS.from_texts(texts=texts, embedding=self.embedder, metadatas=metadatas or [])
         self.vs.save_local(str(self.index_dir))
         return self.vs
 
@@ -179,10 +179,12 @@ class ChatIngestor:
             self.model_loader = ModelLoader()
             self.logger = CustomLogger.get_logger(__name__)
             self.use_session = use_session_dirs
-            self.session_id = session_id #or generate_session_id()
+            self.session_id = session_id or generate_session_id()
             
-            self.temp_base = Path(temp_base); self.temp_base.mkdir(parents=True, exist_ok=True)
-            self.faiss_base = Path(faiss_base); self.faiss_base.mkdir(parents=True, exist_ok=True)
+            self.temp_base = Path(temp_base)
+            self.temp_base.mkdir(parents=True, exist_ok=True)
+            self.faiss_base = Path(faiss_base)
+            self.faiss_base.mkdir(parents=True, exist_ok=True)
             
             self.temp_dir = self._resolve_dir(self.temp_base)
             self.faiss_dir = self._resolve_dir(self.faiss_base)
