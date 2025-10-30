@@ -106,9 +106,9 @@ class FAISSManager:
 class DocHandler:
     """"pdf SAVE + READ handler for page analysis"""
     def __init__(self, data_dir: Optional[str]= None, session_id: Optional[str]= None):
-        self.logger = CustomLogger.get_logger(__name__)
+        self.logger = CustomLogger().get_logger(__name__)
         self.data_dir = data_dir or os.getenv("DATA_STORAGE_PATH", os.path.join(os.getcwd(), "data", "document_analysis")) 
-        self.session_id = session_id #or _session_id("session")
+        self.session_id = session_id or generate_session_id("session") 
         self.session_path = os.path.join(self.data_dir, self.session_id)
         os.makedirs(self.session_path, exist_ok=True)
         self.logger.info("Doc Handler initialized.", session_id=self.session_id, session_path=self.session_path)
@@ -126,7 +126,7 @@ class DocHandler:
                 if hasattr(uploaded_file, "read"):
                     f.write(uploaded_file.read())
                 else:
-                    f.write(uploaded_file.get_buffer())
+                    f.write(uploaded_file.getbuffer())
 
             self.logger.info("PDF File saved successfully", file=filename, save_path=save_path, session_id = self.session_id)
             return save_path
@@ -179,7 +179,7 @@ class ChatIngestor:
     ):
         try:
             self.model_loader = ModelLoader()
-            self.logger = CustomLogger.get_logger(__name__)
+            self.logger = CustomLogger().get_logger(__name__)
             self.use_session = use_session_dirs
             self.session_id = session_id or generate_session_id()
             
