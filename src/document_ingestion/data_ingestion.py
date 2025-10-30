@@ -1,3 +1,5 @@
+
+from __future__ import annotations
 import os
 import sys
 import json
@@ -7,7 +9,7 @@ import hashlib
 from pathlib import Path
 from datetime import datetime, timezone
 from typing import Optional, Iterable, List, Optional, Any, Dict
-from __future__ import annotations
+
 
 
 import fitz
@@ -20,8 +22,8 @@ from utils.model_loader import ModelLoader
 from custom_logging.custom_logger import CustomLogger
 from exception.custom_exception import DocumentPortalException
 
-from utils.file_io import session_id, save_uploaded_files, generate_session_id
-from utils.document_ops import load_documents, concat_for_analysis, concact_for_comparison
+from utils.file_io import save_uploaded_files, generate_session_id
+from utils.document_ops import load_documents, concat_for_analysis
 
 SUPPORTED_EXTENSIONS = {'.pdf', '.docx', '.txt'}
 
