@@ -51,8 +51,8 @@ class DocumentComparator:
     def _format_response(self, response_parsed: list[dict]) -> pd.DataFrame:
         try:
             print("################", response_parsed)
-            response_list = {k: [v] for k, v in response_parsed.items()}
-            df = pd.DataFrame(response_list)
+            df = pd.DataFrame(response_parsed)
+            
             self.logger.info("Response formatted into DataFrame successfully")
             return df
         except Exception as e:

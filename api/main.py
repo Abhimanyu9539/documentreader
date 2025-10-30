@@ -101,6 +101,7 @@ async def compare_documents(reference: UploadFile = File(...), actual: UploadFil
         combined_text = dc.combine_documents()
         comparator = DocComparatorLLM()
         df = comparator.compare_documents(combined_text)
+        print("##########", df)
         return {"rows": df.to_dict(orient="records"), "session_id": dc.session_id}
         
     except HTTPException:
