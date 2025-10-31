@@ -4,35 +4,102 @@ DocumentReader is a Python project that leverages Large Language Models (LLMs) t
 
 ## Features
 
-- Support for multiple document formats: PDF, Word (.doc/.docx), and text files
-- Integration with LLM embedding models for semantic text representation
-- Configurable embedding model selection via YAML and environment variables
-- Structured JSON logging powered by `structlog` for enhanced observability
-- Modular design for easy extension and integration into AI/ML pipelines
+-   **Multi-format Document Processing:** Ingest and process text from PDF, Word (.docx), and plain text files.
+-   **Single and Multi-Document Chat:** Engage in conversations with single or multiple documents, allowing you to ask questions and get context-aware answers.
+-   **Document Comparison:** Compare two documents to identify similarities and differences.
+-   **In-depth Document Analysis:** Analyze documents to extract key information and insights.
+-   **Flexible LLM Integration:** Supports multiple LLM providers, including:
+    -   OpenAI
+    -   Groq
+    -   Google Generative AI
+-   **Structured and Centralized Logging:** Centralized logging that creates a single, timestamped log file for each run, making debugging and monitoring easier.
+-   **Easy Configuration:** Simple configuration using a single `config.yaml` file for models, prompts, and other settings.
 
-## Installation
+## Getting Started
 
-```bash
-pip install -r requirements.txt
-```
+### Prerequisites
+
+-   Python 3.8+
+-   pip
+
+### Installation
+
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/your-username/DocumentReader.git
+    cd DocumentReader
+    ```
+
+2.  **Install dependencies:**
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+### Configuration
+
+1.  **Environment Variables:**
+    Create a `.env` file in the root directory and add your API keys. At a minimum, you need the `OPENAI_API_KEY`.
+
+    ```
+    OPENAI_API_KEY="your-openai-api-key"
+    # Add other keys if you plan to use other providers
+    # GROQ_API_KEY="your-groq-api-key"
+    # GOOGLE_API_KEY="your-google-api-key"
+    ```
+
+2.  **Configuration File:**
+    The main configuration for the application is in `config/config.yaml`. You can customize the LLM provider, models, and other parameters in this file.
+
+    By default, the `LLM_PROVIDER` is set to "openai". You can change this by setting the `LLM_PROVIDER` environment variable or by modifying the `config.yaml` file.
 
 ## Usage
 
-```python
-from utils.config_loader import load_config
-from custom_logging.custom_logger import CustomLogger
+To run the Streamlit user interface:
 
-logger = CustomLogger().get_logger(__file__)
-config = load_config()
-
-# Use LLM embedding models and document loaders as configured
+```bash
+streamlit run streamlit_ui.py
 ```
 
-## Configuration
+This will launch a web-based interface where you can upload documents and interact with the various features of DocumentReader.
 
-- Use `config/config.yaml` for configuring embedding models, API keys, and other parameters
-- Optionally set the `LLM_PROVIDER` environment variable to select your preferred LLM backend (default: "openai")
+Alternatively, you can run the Flask application:
+
+```bash
+python app.py
+```
+
+## Project Structure
+
+```
+.
+├── app.py                  # Main Flask application
+├── streamlit_ui.py         # Streamlit user interface
+├── requirements.txt        # Project dependencies
+├── config/
+│   └── config.yaml         # Configuration file
+├── custom_logging/
+│   └── custom_logger.py    # Custom logging implementation
+├── exception/
+│   └── custom_exception.py # Custom exception handling
+├── src/                    # Source code
+│   ├── document_analyser/
+│   ├── document_compare/
+│   ├── multi_document_chat/
+│   └── single_document_chat/
+├── static/                 # Static assets for the web interface
+├── templates/              # HTML templates for the web interface
+├── utils/                  # Utility functions
+└── ...
+```
+
+## Logging
+
+The application uses a custom logger that creates a structured log file for each run in the `logs/` directory. This makes it easy to trace the application's execution and debug any issues.
 
 ## Contributing
 
 Contributions and improvements are welcome! Please fork the repository and submit pull requests.
+
+## License
+
+This project is licensed under the MIT License. See the `LICENSE` file for details.
