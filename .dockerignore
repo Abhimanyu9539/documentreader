@@ -1,0 +1,38 @@
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+build/
+dist/
+venv/
+*.venv/
+env/
+*.env
+
+# Logs
+logs/
+*.log
+
+# IDE and OS specific
+.vscode/
+.idea/
+*.DS_Store
+
+# Notebooks
+notebook/
+
+# Documentation
+README.md
+
+# Index files
+faiss_index/
