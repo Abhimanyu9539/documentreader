@@ -63,20 +63,20 @@ def test_config_malformed_yaml(tmp_path):
 # =================================================================
 
 def test_custom_exception_format():
-    """Tests that the DocumentPortalException class formats the error message correctly."""
+    """Tests that the CustomException class formats the error message correctly."""
     try:
         # Simulate a real error to capture its details
         raise ValueError("This is the original error.")
     except ValueError as e:
-        # Create the custom exception instance, passing sys for context
+        # Create the custom exception instance
         custom_exc = DocumentPortalException(e, sys)
         
         # Convert the exception to its string representation
         error_message = str(custom_exc)
         
-        # Assert that the formatted message contains the actual, correct parts
-        assert "Error in" in error_message
-        assert "at line" in error_message
-        assert "Message: This is the original error." in error_message
+        # Assert that the formatted message contains all the expected parts
+        assert "Error occurred in python script name" in error_message
+        assert "line number" in error_message
+        assert "error message: This is the original error." in error_message
         # Check that the name of this test file is in the error message
         assert os.path.basename(__file__) in error_message
