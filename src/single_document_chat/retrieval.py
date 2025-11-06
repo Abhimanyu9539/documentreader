@@ -9,7 +9,7 @@ from langchain.chains.history_aware_retriever import create_history_aware_retrie
 from langchain.chains.retrieval import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from utils.model_loader import ModelLoader
-from custom_logging.custom_logger import CustomLogger
+from custom_logging import GLOBAL_LOGGER as log
 from exception.custom_exception import DocumentPortalException
 from prompt.prompt_library import PROMPT_REGISTRY
 from model.models import PromptType
@@ -19,7 +19,7 @@ import streamlit as st
 class ConversationalRAG():
     def __init__(self, session_id: str, retriever) -> None:
         try:
-            self.logger = CustomLogger().get_logger()
+            log = CustomLogger().get_logger()
             self.model_loader = ModelLoader()
             self.session_id = session_id
             self.retriever = retriever
@@ -32,7 +32,7 @@ class ConversationalRAG():
                 self.context_prompt
             )
 
-            self.logger.info("ConversationalRAG initialized successfully", session_id = session_id)
+            log.info("ConversationalRAG initialized successfully", session_id = session_id)
 
             self.qa_chain = create_stuff_documents_chain(
                 self.llm,
@@ -44,7 +44,7 @@ class ConversationalRAG():
                 self.qa_chain
             )
 
-            self.logger.info("RAG Chain created successfully", session_id = session_id)
+            log.info("RAG Chain created successfully", session_id = session_id)
 
             self.chain = RunnableWithMessageHistory(
                 self.rag_chain,
@@ -54,20 +54,20 @@ class ConversationalRAG():
                 output_messages_key= "output"
             )
 
-            self.logger.info("RunnableWithMessageHistory created successfully", session_id = session_id)
+            log.info("RunnableWithMessageHistory created successfully", session_id = session_id)
 
         except Exception as e:
-            self.logger.error("Error initializing ConversationalRAG", error = str(e), session_id = session_id)
+            log.error("Error initializing ConversationalRAG", error = str(e), session_id = session_id)
             raise DocumentPortalException("Initialization Error in ConversationalRAG", sys)
 
 
     def _load_llm(self):
         try:
             llm = self.model_loader.load_llm()
-            self.logger.info("LLM loaded successfully", session_id = self.session_id)
+            log.info("LLM loaded successfully", session_id = self.session_id)
             return llm
         except Exception as e:
-            self.logger.error(f"Error loading LLM: {e}")
+            log.error(f"Error loading LLM: {e}")
             raise DocumentPortalException("Error loading LLM", sys)
         
 
@@ -78,11 +78,11 @@ class ConversationalRAG():
 
             if session_id not in st.session_state.store:
                 st.session_state.store[session_id] = ChatMessageHistory()
-                self.logger.info("New chat session history created", session_id=session_id)
+                log.info("New chat session history created", session_id=session_id)
 
             return st.session_state.store[session_id]
         except Exception as e:
-            self.logger.error("Failed to access session history", session_id=session_id, error=str(e))
+            log.error("Failed to access session history", session_id=session_id, error=str(e))
             raise DocumentPortalException("Failed to retrieve session history", sys)
 
 
@@ -95,12 +95,12 @@ class ConversationalRAG():
             
             vector_store = FAISS.load_local(index_path, embeddings)
             self.retriever = vector_store.as_retriever(search_kwargs={"k": 3}, search_type="similarity")
-            self.logger.info("FAISS retriever loaded successfully", index_path=index_path)
+            log.info("FAISS retriever loaded successfully", index_path=index_path)
             
             return self.retriever
 
         except Exception as e:
-            self.logger.error("Error loading FAISS retriever", error = str(e))
+            log.error("Error loading FAISS retriever", error = str(e))
             raise DocumentPortalException("Error loading FAISS retriever", sys)
         
 
@@ -113,12 +113,12 @@ class ConversationalRAG():
             answer = response.get("answer", "No answer.")
 
             if not answer:
-                self.logger.warning("Empty answer received", session_id=self.session_id)
+                log.warning("Empty answer received", session_id=self.session_id)
 
-            self.logger.info("Answer generated successfully", session_id=self.session_id, user_input=user_input, answer=answer[:111])
+            log.info("Answer generated successfully", session_id=self.session_id, user_input=user_input, answer=answer[:111])
 
             return answer
         
         except Exception as e:
-            self.logger.error("Error invoking ConversationalRAG", error = str(e))
+            log.error("Error invoking ConversationalRAG", error = str(e))
             raise DocumentPortalException("Error invoking ConversationalRAG", sys)

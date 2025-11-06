@@ -3,7 +3,7 @@ import fitz
 import uuid
 import sys
 from datetime import datetime
-from custom_logging.custom_logger import CustomLogger
+from custom_logging import GLOBAL_LOGGER as log
 from exception.custom_exception import DocumentPortalException
 
 class DocumentHandler:
@@ -13,14 +13,14 @@ class DocumentHandler:
     """
     def __init__(self, data_dir = None, session_id = None):
         try:
-            self.logger = CustomLogger().get_logger(__name__)
+            
             self.data_dir = data_dir or os.getenv("DATA_STORAGE_PATH", os.path.join(os.getcwd(), "data", "document_analysis"))
             self.session_id = session_id or f"session_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}"
             self.session_path = os.path.join(self.data_dir, self.session_id)
             os.makedirs(self.session_path, exist_ok=True)
-            self.logger.info("PDF Handler Initialized", session_id=self.session_id, session_path=self.session_path)
+            log.info("PDF Handler Initialized", session_id=self.session_id, session_path=self.session_path)
         except Exception as e:
-            self.logger.error(f"Error initializing document handler: {e}")
+            log.error(f"Error initializing document handler: {e}")
             raise DocumentPortalException(f"Error Initializing document handler : {e}")
 
 
@@ -36,11 +36,11 @@ class DocumentHandler:
             with open(save_path, "wb") as file:
                 file.write(uploaded_file.getbuffer())
 
-            self.logger.info("PDF saved successfully", file=filename, save_path=save_path, session_id=self.session_id)
+            log.info("PDF saved successfully", file=filename, save_path=save_path, session_id=self.session_id)
             return save_path
 
         except Exception as e:
-            self.logger.error(f"Error saving PDF: {e}", session_id=self.session_id)
+            log.error(f"Error saving PDF: {e}", session_id=self.session_id)
             raise DocumentPortalException(f"Error saving PDF: {e}", sys)
 
     def read_pdf(self, pdf_path:str)->str:
@@ -51,10 +51,10 @@ class DocumentHandler:
                     text_chunks.append(f"\n--- Page {page_num} ---\n{page.get_text()}")
             text = "\n".join(text_chunks)
 
-            self.logger.info("PDF read successfully", pdf_path=pdf_path, session_id=self.session_id, pages=len(text_chunks))
+            log.info("PDF read successfully", pdf_path=pdf_path, session_id=self.session_id, pages=len(text_chunks))
             return text
         except Exception as e:
-            self.logger.error(f"Error reading PDF: {e}", session_id=self.session_id)
+            log.error(f"Error reading PDF: {e}", session_id=self.session_id)
             raise DocumentPortalException(f"Error reading PDF: {e}", sys)
 
 if __name__ == "__main__":

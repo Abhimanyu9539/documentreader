@@ -1,7 +1,7 @@
 import sys
 from dotenv import load_dotenv
 import pandas as pd
-from custom_logging.custom_logger import CustomLogger
+from custom_logging import GLOBAL_LOGGER as log
 from exception.custom_exception import DocumentPortalException
 from model.models import ChangeFormat
 from langchain_core.output_parsers import JsonOutputParser
@@ -14,7 +14,7 @@ class DocumentComparator:
 
     def __init__(self):
         load_dotenv()
-        self.logger = CustomLogger().get_logger(__name__)
+        
 
         try:
             self.loader = ModelLoader()
@@ -24,10 +24,10 @@ class DocumentComparator:
             self.prompt = PROMPT_REGISTRY["document_comparison"]    
             self.chain = self.prompt | self.llm | self.parser
 
-            self.logger.info("DocumentComparator initialized successfully")
+            log.info("DocumentComparator initialized successfully")
 
         except Exception as e:
-            self.logger.error(f"Error initializing DocumentComparator: {e}")
+            log.error(f"Error initializing DocumentComparator: {e}")
             raise DocumentPortalException("Failed to initialize DocumentComparator", sys)
 
     def compare_documents(self, combined_docs: str) -> pd.DataFrame:
@@ -38,13 +38,13 @@ class DocumentComparator:
                 "format_instruction": self.parser.get_format_instructions()
             }
 
-            self.logger.info("LLM powered document comparison started")
+            log.info("LLM powered document comparison started")
             response = self.chain.invoke(inputs)
-            self.logger.info("Document comparison completed successfully")
+            log.info("Document comparison completed successfully")
             return self._format_response(response)
         
         except Exception as e:
-            self.logger.error(f"Error comparing documents: {e}")
+            log.error(f"Error comparing documents: {e}")
             raise DocumentPortalException(f"Error comparing documents: {e}", sys)
         
 
@@ -53,8 +53,8 @@ class DocumentComparator:
             print("################", response_parsed)
             response_list = {k: [v] for k, v in response_parsed.items()}
             df = pd.DataFrame(response_list)
-            self.logger.info("Response formatted into DataFrame successfully")
+            log.info("Response formatted into DataFrame successfully")
             return df
         except Exception as e:
-            self.logger.error("Error formatting response into DataFrame", error=str(e))
+            log.error("Error formatting response into DataFrame", error=str(e))
             raise DocumentPortalException("Error formatting response", sys)

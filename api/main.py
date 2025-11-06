@@ -9,10 +9,10 @@ from typing import Any, List, Optional
 from src.document_ingestion.data_ingestion import (
     DocumentComparator, 
     DocHandler, 
-    FAISSManager,
     ChatIngestor
 )
 
+from custom_logging import GLOBAL_LOGGER as log
 from src.document_analyser.data_analysis import DocumentAnalyzer
 from src.document_compare.document_comparator import DocumentComparator as DocComparatorLLM
 from src.document_chat.retrieval import ConversationalRAG
@@ -120,7 +120,7 @@ async def chat_build_index(
     k: int = Form(5),
 ) -> Any:
     try:
-        #log.info(f"Indexing chat session. Session ID: {session_id}, Files: {[f.filename for f in files]}")
+        log.info(f"Indexing chat session. Session ID: {session_id}, Files: {[f.filename for f in files]}")
         wrapped = [FastAPIFileAdapter(f) for f in files]
         # this is my main class for storing a data into VDB
         # created a object of ChatIngestor
@@ -135,7 +135,7 @@ async def chat_build_index(
         ci.built_retriver(  # if your method name is actually build_retriever, fix it there as well
             wrapped, chunk_size=chunk_size, chunk_overlap=chunk_overlap, k=k
         )
-        #log.info(f"Index created successfully for session: {ci.session_id}")
+        log.info(f"Index created successfully for session: {ci.session_id}")
         return {"session_id": ci.session_id, "k": k, "use_session_dirs": use_session_dirs}
     except HTTPException:
         raise
@@ -151,7 +151,7 @@ async def chat_query(
     k: int = Form(5),
 ) -> Any:
     try:
-        #log.info(f"Received chat query: '{question}' | session: {session_id}")
+        log.info(f"Received chat query: '{question}' | session: {session_id}")
         if use_session_dirs and not session_id:
             raise HTTPException(status_code=400, detail="session_id is required when use_session_dirs=True")
 
@@ -162,7 +162,7 @@ async def chat_query(
         rag = ConversationalRAG(session_id=session_id)
         rag.load_retriever_from_faiss(index_dir, k=k, index_name=FAISS_INDEX_NAME)  # build retriever + chain
         response = rag.invoke(question, chat_history=[])
-        #log.info("Chat query handled successfully.")
+        log.info("Chat query handled successfully.")
 
         return {
             "answer": response,
@@ -173,5 +173,5 @@ async def chat_query(
     except HTTPException:
         raise
     except Exception as e:
-        #log.exception("Chat query failed")
+        log.exception("Chat query failed")
         raise HTTPException(status_code=500, detail=f"Query failed: {e}")

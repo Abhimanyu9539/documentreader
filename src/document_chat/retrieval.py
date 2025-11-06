@@ -11,7 +11,7 @@ from langchain_community.vectorstores import FAISS
 from utils.model_loader import ModelLoader
 from exception.custom_exception import DocumentPortalException
 #from logger import GLOBAL_LOGGER as log
-from custom_logging.custom_logger import CustomLogger
+from custom_logging import GLOBAL_LOGGER as log
 from prompt.prompt_library import PROMPT_REGISTRY
 from model.models import PromptType
 
@@ -29,7 +29,7 @@ class ConversationalRAG:
     def __init__(self, session_id: Optional[str], retriever=None):
         try:
             self.session_id = session_id
-            self.logger = CustomLogger().get_logger(__name__)
+            
             # Load LLM and prompts once
             self.llm = self._load_llm()
             self.contextualize_prompt: ChatPromptTemplate = PROMPT_REGISTRY[
@@ -45,9 +45,9 @@ class ConversationalRAG:
             if self.retriever is not None:
                 self._build_lcel_chain()
 
-            self.logger.info("ConversationalRAG initialized", session_id=self.session_id)
+            log.info("ConversationalRAG initialized", session_id=self.session_id)
         except Exception as e:
-            self.logger.error("Failed to initialize ConversationalRAG", error=str(e))
+            log.error("Failed to initialize ConversationalRAG", error=str(e))
             raise DocumentPortalException("Initialization error in ConversationalRAG", sys)
 
     # ---------- Public API ----------
@@ -83,7 +83,7 @@ class ConversationalRAG:
             )
             self._build_lcel_chain()
 
-            self.logger.info(
+            log.info(
                 "FAISS retriever loaded successfully",
                 index_path=index_path,
                 index_name=index_name,
@@ -93,7 +93,7 @@ class ConversationalRAG:
             return self.retriever
 
         except Exception as e:
-            self.logger.error("Failed to load retriever from FAISS", error=str(e))
+            log.error("Failed to load retriever from FAISS", error=str(e))
             raise DocumentPortalException("Loading error in ConversationalRAG", sys)
 
     def invoke(self, user_input: str, chat_history: Optional[List[BaseMessage]] = None) -> str:
@@ -107,11 +107,11 @@ class ConversationalRAG:
             payload = {"input": user_input, "chat_history": chat_history}
             answer = self.chain.invoke(payload)
             if not answer:
-                self.logger.warning(
+                log.warning(
                     "No answer generated", user_input=user_input, session_id=self.session_id
                 )
                 return "no answer generated."
-            self.logger.info(
+            log.info(
                 "Chain invoked successfully",
                 session_id=self.session_id,
                 user_input=user_input,
@@ -119,7 +119,7 @@ class ConversationalRAG:
             )
             return answer
         except Exception as e:
-            self.logger.error("Failed to invoke ConversationalRAG", error=str(e))
+            log.error("Failed to invoke ConversationalRAG", error=str(e))
             raise DocumentPortalException("Invocation error in ConversationalRAG", sys)
 
     # ---------- Internals ----------
@@ -129,10 +129,10 @@ class ConversationalRAG:
             llm = ModelLoader().load_llm()
             if not llm:
                 raise ValueError("LLM could not be loaded")
-            self.logger.info("LLM loaded successfully", session_id=self.session_id)
+            log.info("LLM loaded successfully", session_id=self.session_id)
             return llm
         except Exception as e:
-            self.logger.error("Failed to load LLM", error=str(e))
+            log.error("Failed to load LLM", error=str(e))
             raise DocumentPortalException("LLM loading error in ConversationalRAG", sys)
 
     @staticmethod
@@ -167,7 +167,7 @@ class ConversationalRAG:
                 | StrOutputParser()
             )
 
-            self.logger.info("LCEL graph built successfully", session_id=self.session_id)
+            log.info("LCEL graph built successfully", session_id=self.session_id)
         except Exception as e:
-            self.logger.error("Failed to build LCEL chain", error=str(e), session_id=self.session_id)
+            log.error("Failed to build LCEL chain", error=str(e), session_id=self.session_id)
             raise DocumentPortalException("Failed to build LCEL chain", sys)
