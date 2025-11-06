@@ -68,7 +68,7 @@ class FastAPIFileAdapter:
 def _read_pdf_via_handler(handler: DocHandler, file_path: str):
     """Helper function to read PDF using DocHandler."""
     try:
-        pass
+        return handler.read_pdf(file_path)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"PDF Read Failed : {str(e)}")
 
